@@ -35,6 +35,18 @@ Claude Code assigns you a deterministic companion pet based on your account ID. 
 - Python 3.8+
 - [Bun](https://bun.sh) (for wyhash — must be on PATH)
 
+Bun is **required**. Claude Code internally uses `Bun.hash` (wyhash) to generate pets, and there is no equivalent native Python implementation. The tool spawns a persistent Bun subprocess to replicate the exact same hash — without it, the search cannot run.
+
+**Install Bun:**
+
+```bash
+# Linux / macOS / WSL
+curl -fsSL https://bun.sh/install | bash
+
+# Windows (PowerShell)
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+
 ---
 
 ## Usage
