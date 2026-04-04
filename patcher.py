@@ -545,6 +545,17 @@ def patch_binary(binary_path, old_salt, new_salt):
 
 # ─── Update companion in .claude.json ───
 
+def _atomic_write_json(path, data):
+    """Write JSON to path atomically (write to .tmp then rename)."""
+    tmp_path = str(path) + ".tmp"
+    content = json.dumps(data, indent=2, ensure_ascii=False)
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        f.write(content)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_path, str(path))
+
+
 def update_companion(name=None, personality=None):
     """Update companion name/personality in ~/.claude.json."""
     path = get_claude_json_path()
@@ -558,7 +569,7 @@ def update_companion(name=None, personality=None):
     if personality:
         data["companion"]["personality"] = personality
 
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    _atomic_write_json(path, data)
 
 
 def delete_companion():
@@ -567,4 +578,4 @@ def delete_companion():
     data = json.loads(path.read_text(encoding="utf-8"))
     if "companion" in data:
         del data["companion"]
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    _atomic_write_json(path, data)
